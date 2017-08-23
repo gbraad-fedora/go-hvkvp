@@ -24,4 +24,5 @@ With `$kvpDataItem.Source = 0` the KVP gets stored as `/var/lib/hyperv/.kvp_pool
 ```
 $ go build main.go
 $ ./main
+Key: IpAddress, Value: 10.0.75.128
 ```
