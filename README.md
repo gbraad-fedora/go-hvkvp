@@ -1,5 +1,5 @@
-go-hvkvp
-========
+Read Hyper-V KeyValue pair using Go
+===================================
 
 
 ## Prepare and send Key-Value pair
@@ -15,6 +15,10 @@ $kvpDataItem.Source = 0
 
 $VmMgmt.AddKvpItems($Vm, $kvpDataItem.PSBase.GetText(1))
 ```
+
+#### Note
+With `$kvpDataItem.Source = 0` the KVP gets stored as `/var/lib/hyperv/.kvp_pool_0`.
+
 
 ## Receive/Read on the host:
 ```
