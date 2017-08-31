@@ -1,9 +1,8 @@
-package main
+package hvkvp
 
 import (
 	"io"
 	"fmt"
-	"flag"
 	"os"
 	"bytes"
 	"strings"
@@ -46,7 +45,7 @@ func getKvpRecords() []kvp_record {
 	file, err := os.Open(DEFAULT_POOLNAME)
 	if err != nil {
 		fmt.Println("Error opening pool")
-		os.Exit(1)
+		os.Exit(3)
 	}
 	
 	var records []kvp_record
@@ -66,7 +65,7 @@ func getKvpRecords() []kvp_record {
 	return records
 }
 
-func getKvpRecordByKey(key string) {
+func GetKvpRecordByKey(key string) {
 	for _, record := range getKvpRecords() {
 		if(strings.EqualFold(record.GetKey(), key)) {
 			fmt.Printf(record.GetValue())
@@ -75,23 +74,8 @@ func getKvpRecordByKey(key string) {
 	}
 }
 
-func getAllKvpRecords(format string) {
+func GetAllKvpRecords(format string) {
 	for _, record := range getKvpRecords() {
 		fmt.Printf(format, record.GetKey(), record.GetValue())
 	}
-}
-
-func main() {
-	exportMode := flag.Bool("export", false, "Return all for export as environment variable")
-    searchMode := flag.String("key", "", "Search for a specific key and return value")
-	flag.Parse()
-
-    if(*searchMode != "") {
-    	getKvpRecordByKey(*searchMode)
-    } else if(*exportMode) {
-    	getAllKvpRecords(EXPORT_FORMAT)
-    } else {
-    	getAllKvpRecords(READ_FORMAT)
-    }
-    os.Exit(0)
 }
