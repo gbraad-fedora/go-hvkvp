@@ -25,16 +25,16 @@ import (
 	"strings"
 )
 
-type kvp_record struct {
+type KvpRecord struct {
 	Key   [MAX_KEY_SIZE]byte
 	Value [MAX_VALUE_SIZE]byte
 }
 
-func (record *kvp_record) GetKey() string {
+func (record *KvpRecord) GetKey() string {
 	return strings.Trim(string(record.Key[:MAX_KEY_SIZE]), "\x00")
 }
 
-func (record *kvp_record) GetValue() string {
+func (record *KvpRecord) GetValue() string {
 	return strings.Trim(string(record.Value[:MAX_VALUE_SIZE]), "\x00")
 }
 
@@ -55,17 +55,17 @@ func readNextBytes(file *os.File, number int) ([]byte, error) {
 	return bytes, nil
 }
 
-func getKvpRecords(poolFile string) []kvp_record {
+func getKvpRecords(poolFile string) []KvpRecord {
 	file, err := os.Open(poolFile)
 	if err != nil {
 		fmt.Println("Error opening pool")
 		os.Exit(3)
 	}
 
-	var records []kvp_record
+	var records []KvpRecord
 
 	for {
-		record := kvp_record{}
+		record := KvpRecord{}
 		data, err := readNextBytes(file, MAX_KEY_SIZE+MAX_VALUE_SIZE)
 		buffer := bytes.NewBuffer(data)
 		err = binary.Read(buffer, binary.LittleEndian, &record)
@@ -79,17 +79,15 @@ func getKvpRecords(poolFile string) []kvp_record {
 	return records
 }
 
-func GetKvpRecordByKey(key string) {
+func GetKvpRecordByKey(key string) *KvpRecord {
 	for _, record := range getKvpRecords(DEFAULT_POOLNAME) {
 		if strings.EqualFold(record.GetKey(), key) {
-			fmt.Printf(record.GetValue())
-			break
+			return &record
 		}
 	}
+	return nil
 }
 
-func GetAllKvpRecords(format string) {
-	for _, record := range getKvpRecords(DEFAULT_POOLNAME) {
-		fmt.Printf(format, record.GetKey(), record.GetValue())
-	}
+func GetAllKvpRecords() []KvpRecord {
+	return getKvpRecords(DEFAULT_POOLNAME)
 }

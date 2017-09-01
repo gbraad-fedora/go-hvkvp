@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	hvkvp "github.com/gbraad/go-hvkvp"
@@ -28,17 +29,35 @@ const (
 	EXPORT_FORMAT = "export %s=\"%s\"\n"
 )
 
+func printValue(record *hvkvp.KvpRecord) {
+	if record != nil {
+		fmt.Printf(record.GetValue())
+	}
+}
+
+func printRecord(record *hvkvp.KvpRecord, format string) {
+	if record != nil {
+		fmt.Printf(format, record.GetKey(), record.GetValue())
+	}
+}
+
+func printRecords(records []hvkvp.KvpRecord, format string) {
+	for _, record := range records {
+		printRecord(&record, format)
+	}
+}
+
 func main() {
 	exportMode := flag.Bool("export", false, "Return all for export as environment variable")
 	searchMode := flag.String("key", "", "Search for a specific key and return value")
 	flag.Parse()
 
 	if *searchMode != "" {
-		hvkvp.GetKvpRecordByKey(*searchMode)
+		printValue(hvkvp.GetKvpRecordByKey(*searchMode))
 	} else if *exportMode {
-		hvkvp.GetAllKvpRecords(EXPORT_FORMAT)
+		printRecords(hvkvp.GetAllKvpRecords(), EXPORT_FORMAT)
 	} else {
-		hvkvp.GetAllKvpRecords(READ_FORMAT)
+		printRecords(hvkvp.GetAllKvpRecords(), READ_FORMAT)
 	}
 	os.Exit(0)
 }
