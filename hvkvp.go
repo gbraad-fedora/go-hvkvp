@@ -27,7 +27,7 @@ const (
 	MAX_VALUE_SIZE = 2048
 	DEFAULT_POOLNAME = "/var/lib/hyperv/.kvp_pool_0"
 	READ_FORMAT = "Key: %s, Value: %s\n"
-	EXPORT_FORMAT = "export %s=%s\n"
+	EXPORT_FORMAT = "export %s=\"%s\"\n"
 )
 
 func readNextBytes(file *os.File, number int) ([]byte, error) {
@@ -41,8 +41,8 @@ func readNextBytes(file *os.File, number int) ([]byte, error) {
 	return bytes, nil
 }
 
-func getKvpRecords() []kvp_record {
-	file, err := os.Open(DEFAULT_POOLNAME)
+func getKvpRecords(poolFile string) []kvp_record {
+	file, err := os.Open(poolFile)
 	if err != nil {
 		fmt.Println("Error opening pool")
 		os.Exit(3)
@@ -66,7 +66,7 @@ func getKvpRecords() []kvp_record {
 }
 
 func GetKvpRecordByKey(key string) {
-	for _, record := range getKvpRecords() {
+	for _, record := range getKvpRecords(DEFAULT_POOLNAME) {
 		if(strings.EqualFold(record.GetKey(), key)) {
 			fmt.Printf(record.GetValue())
 			break
@@ -75,7 +75,7 @@ func GetKvpRecordByKey(key string) {
 }
 
 func GetAllKvpRecords(format string) {
-	for _, record := range getKvpRecords() {
+	for _, record := range getKvpRecords(DEFAULT_POOLNAME) {
 		fmt.Printf(format, record.GetKey(), record.GetValue())
 	}
 }
