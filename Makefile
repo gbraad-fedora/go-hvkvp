@@ -13,10 +13,10 @@ $(PREFIX)-%: build/Dockerfile.compile-%
 	echo "Building binaries for $@"
 	docker build -t compile-$@ -f $< .
 	docker create --name $@-extract compile-$@ sh
-	docker cp $@-extract:/workspace/bin/hvkvp ./out/hvkvp
+	docker cp $@-extract:/workspace/bin/hvkvp ./hvkvp
 	docker rm $@-extract || true
-	tar zcvf ./out/$@-$(VERSION).tar.gz ./out/hvkvp
-	mv ./out/hvkvp ./out/$@
+	tar czvf ./out/$@-$(VERSION).tar.gz hvkvp
+	mv ./hvkvp ./out/$@
 	#docker rmi $@ || true
 
 clean:
