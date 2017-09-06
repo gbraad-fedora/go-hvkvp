@@ -5,7 +5,7 @@ TARGETS=$(addprefix $(PREFIX)-, centos7 fedora26)
 
 build: $(TARGETS)
 
-$(PREFIX)-%: Dockerfile.%
+$(PREFIX)-%: build/Dockerfile.%
 	mkdir -p out
 	docker rmi -f $@ >/dev/null  2>&1 || true
 	docker rm -f $@-extract > /dev/null 2>&1 || true
