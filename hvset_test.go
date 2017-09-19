@@ -29,8 +29,8 @@ func assertContains(t *testing.T, a string, b string) {
 	t.Fatal(fmt.Sprintf("'%v' doesn't contain '%v'", a, b))
 }
 
-func TestPrepareKeyValuePairCommands(t *testing.T) {
-	record := NewMachineRecord("test", "Greeting", "Hello, World!")
+func TestPrepareKeyValuePairCommand(t *testing.T) {
+	record := NewMachineKVPRecord("test", "Greeting", "Hello, World!")
 	command := prepareKeyValuePairCommand(record)
 
 	assertContains(t, command, fmt.Sprintf("kvpDataItem.Name = '%s'", record.Key))

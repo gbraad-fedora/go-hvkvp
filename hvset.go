@@ -20,37 +20,40 @@ import (
 	"fmt"
 )
 
-func NewMachineRecord(machineName string, key string, value string) *MachineRecord {
-	return &MachineRecord{
-		MachineName: machineName,
-		Key:         key,
-		Value:       value,
-		Pool:        0,
+func NewMachineKVPRecord(machineName string, key string, value string) *MachineKVPRecord {
+	return &MachineKVPRecord{
+		Machine: machineName,
+		Key:     key,
+		Value:   value,
+		Pool:    0,
 	}
 }
 
-type MachineRecord struct {
-	MachineName string
-	Key         string
-	Value       string
-	Pool        int
+func NewMachineKVPCommand(record *MachineKVPRecord) string {
+	return prepareKeyValuePairCommand(record)
 }
 
-func prepareKeyValuePairCommand(machineRecord *MachineRecord) string {
-	if machineRecord == nil {
+type MachineKVPRecord struct {
+	Machine string
+	Key     string
+	Value   string
+	Pool    int
+}
+
+func prepareKeyValuePairCommand(record *MachineKVPRecord) string {
+	if record == nil {
 		return ""
 	}
 
 	return (`
 $vmMgmt = Get-WmiObject -Namespace root\virtualization\v2 -Class Msvm_VirtualSystemManagementService
-$vm = Get-WmiObject -Namespace root\virtualization\v2 -Class Msvm_ComputerSystem -Filter {` + fmt.Sprintf("ElementName = '%s'", machineRecord.MachineName) + `}
+$vm = Get-WmiObject -Namespace root\virtualization\v2 -Class Msvm_ComputerSystem -Filter {` + fmt.Sprintf("ElementName = '%s'", record.Machine) + `}
 $kvpDataItem = ([WMIClass][String]::Format("\\{0}\{1}:{2}", $vmMgmt.ClassPath.Server, $vmMgmt.ClassPath.NamespacePath, "Msvm_KvpExchangeDataItem")).CreateInstance()
-` + fmt.Sprintf("$kvpDataItem.Name = '%s'", machineRecord.Key) + `
-` + fmt.Sprintf("$kvpDataItem.Data = '%s'", machineRecord.Value) + `
-` + fmt.Sprintf("$kvpDataItem.Source = '%d'", machineRecord.Pool) + `
+` + fmt.Sprintf("$kvpDataItem.Name = '%s'", record.Key) + `
+` + fmt.Sprintf("$kvpDataItem.Data = '%s'", record.Value) + `
+` + fmt.Sprintf("$kvpDataItem.Source = '%d'", record.Pool) + `
 $vmMgmt.RemoveKvpItems($vm, $kvpDataItem.PSBase.GetText(1))
 $result = $vmMgmt.AddKvpItems($vm, $kvpDataItem.PSBase.GetText(1))
 $result.ReturnValue
 	`)
-
 }
