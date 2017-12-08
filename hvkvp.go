@@ -30,12 +30,18 @@ type KvpRecord struct {
 	Value [MAX_VALUE_SIZE]byte
 }
 
+func findNilTerminator(value string) int {
+	return strings.Index(value, "\x00")
+}
+
 func (record *KvpRecord) GetKey() string {
-	return strings.Trim(string(record.Key[:MAX_KEY_SIZE]), "\x00")
+	i := findNilTerminator(string(record.Key[:MAX_KEY_SIZE]))
+	return string(record.Key[:i])
 }
 
 func (record *KvpRecord) GetValue() string {
-	return strings.Trim(string(record.Value[:MAX_VALUE_SIZE]), "\x00")
+	i := findNilTerminator(string(record.Value[:MAX_VALUE_SIZE]))
+	return string(record.Value[:i])
 }
 
 const (
