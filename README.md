@@ -33,6 +33,13 @@ repo --name=hvkvp --baseurl=https://copr-be.cloud.fedoraproject.org/results/gbra
 go-hvkvp
 ```
 
+### From source / development
+```
+$ git clone https://github.com/gbraad/go-hvkvp.git
+$ cd go-hvkvp
+$ go install -v ./cmd/hvkvp
+```
+
 
 ## Usage
 
@@ -55,7 +62,32 @@ With `$kvpDataItem.Source = 0` the KVP gets stored as `/var/lib/hyperv/.kvp_pool
 
 
 ### Receive/Read on the host:
+
+#### All records
 ```
 $ ./hvkvp
 Key: IpAddress, Value: 10.0.75.128
 ```
+
+#### Record by specific key
+```
+$ ./hvkvp --key Hostname
+fedora-vm%
+```
+
+#### Note
+When dealing with special characters, consider using base64 encoding.
+
+For example, the value of the message might contain:
+```
+REVWSUNFPWV0aDAKVVNFREhDUD15Cg==
+```
+
+This can be received on the host as:
+```
+$ hvkvp -key PROVISION_NETWORKING | base64 --decode > /var/lib/minishift/networking
+$ cat /var/lib/minishift/networking
+DEVICE=eth0
+USEDHCP=y
+```
+
