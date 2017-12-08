@@ -1,6 +1,6 @@
 PREFIX=hvkvp
 DESCRIBE=$(git describe --tags)
-VERSION=0.0.3
+VERSION=0.0.4
 
 TARGETS=$(addprefix $(PREFIX)-, centos7 fedora26)
 
