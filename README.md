@@ -40,6 +40,11 @@ $ cd go-hvkvp
 $ go install -v ./cmd/hvkvp
 ```
 
+### Build RPM package
+```
+$ dnf install -y rpm-build go-compilers-golang-compiler
+$ rpmbuild -ba hvkvp.spec
+```
 
 ## Usage
 
